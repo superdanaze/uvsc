@@ -1,18 +1,36 @@
-# ignore everything in the root except the "wp-content" directory.
-!wp-content/
+# ignore everything in the root except the "assets" directory.
+wp-admin
+wp-includes
+.DS_Store
+.gitignore
+readme.html
+license.txt
+README.md
+index.php
+wp-blog-header.php
+wp-cron.php
+wp-load.php
+wp-settings.php
+wp-activate.php
+wp-comments-post.php
+wp-login.php
+wp-signup.php
+wp-config.php
+wp-links-opml.php
+wp-mail.php
+wp-trackback.php
+xmlrpc.php
 
-# ignore everything in the "wp-content" directory, except:
+# ignore everything in the "assets" directory, except:
 # "mu-plugins", "plugins", "themes" directory
-wp-content/*
-!wp-content/mu-plugins/
-!wp-content/plugins/
-!wp-content/themes/
+assets/*
+!assets/themes/
 
 # ignore these plugins
-wp-content/plugins/hello.php
+assets/plugins/hello.php
 
 # ignore specific themes
-wp-content/themes/twenty*/
+assets/themes/twenty*/
 
 # ignore node dependency directories
 node_modules/
