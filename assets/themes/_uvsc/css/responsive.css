@@ -1,8 +1,38 @@
 @media screen and ( min-width: 1px ) {
     
-    /*  HERO SECTIONS
+    /*  HEADER / NAVIGATION
     =========================================== */
-    
+
+    .title-area a img {
+        width:150px;
+    }
+
+
+    /*  SHORTCODES :: BOARD MEMBERS
+    =========================================== */
+
+    .board-members-inner {
+        grid-template-columns: 1fr;
+    }
+
+    /*  modal  */
+
+    .bm-modal-inner {
+        grid-template-columns: 1fr;
+    }
+    .bm-modal-left {
+        height:200px;
+    }
+    #bm-modal-bio-image {
+        right:25px;
+    }
+    .bm-modal-right {
+        max-height: calc(90vh - 200px);
+        padding:50px 15px 25px 15px;
+    }
+    .bm-modal-close {
+        left:25px;
+    }
     
 
 }
@@ -17,13 +47,54 @@
 
 @media screen and ( min-width: 640px ) {
 
+    /*  SHORTCODES :: BOARD MEMBERS
+    =========================================== */
+
+    .board-members-inner[data-items="2"],
+    .board-members-inner[data-items="4"],
+    .board-members-inner[data-items="5"],
+    .board-members-inner[data-items="6"],
+    .board-members-inner[data-items="7"],
+    .board-members-inner[data-items="8"] {
+        grid-template-columns: 1fr 1fr;
+    }
+
 }
 
 
 
 @media screen and ( min-width: 768px ) {
 
-    
+    /*  SHORTCODES :: BOARD MEMBERS
+    =========================================== */
+
+    .board-members-inner[data-items="3"],
+    .board-members-inner[data-items="5"],
+    .board-members-inner[data-items="6"],
+    .board-members-inner[data-items="7"] {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+
+    /*  modal  */
+
+    .bm-modal-inner {
+        grid-template-columns: minmax(200px, 1fr) 3fr;
+    }
+    .bm-modal-left {
+        height:100%;
+    }
+    #bm-modal-bio-image {
+        right:-100px;
+    }
+    .bm-modal-right {
+        max-height: 90vh;
+        padding:50px 15px 25px 150px;
+    }
+    .bm-modal-close {
+        left:unset;
+        right:25px;
+    }
 
 
 }
@@ -40,14 +111,28 @@
 
 @media screen and ( min-width: 1025px ) {
 
-    
-
-
     /*  HEADER / NAVIGATION
     =========================================== */
     
     header.site-header {
         padding-top:15px;
+    }
+    .title-area a {
+        display: block;
+        margin-top:-15px;
+    }
+    .title-area a img {
+        width:175px;
+    }
+
+
+    /*  SHORTCODES :: BOARD MEMBERS
+    =========================================== */
+
+    .board-members-inner[data-items="4"],
+    .board-members-inner[data-items="7"],
+    .board-members-inner[data-items="8"] {
+        grid-template-columns: repeat(4, 1fr);
     }
     
 }
@@ -103,6 +188,15 @@
     }
     h6 {
         font-size: 21.5px;
+    }
+
+
+    /*  GRADIENTS + BACKGROUNDS
+    =========================================== */
+
+    .mobile-slate-blue:before {
+        background-color: var(--uvsc-slate-blue);
+        opacity: 0.65;
     }
 
 

@@ -297,13 +297,14 @@ remove_action( 'genesis_before_header', 'genesis_skip_links', 5 );
  * 
  */
 
-define('NEW_CLIENT','((CLIENT_DIR))');
+define('NEW_CLIENT','uvsc');
 define('E_TEMPLATE','page-templates/template');
 define('E_TEMPLATES','page-templates/template-parts/template');
 define('E_FLEX','page-templates/template-parts/flex');
 define('E_PARTS', '/template-parts/template');
+define('E_SHORTCODES', 'page-templates/template-parts/shortcodes/shortcode');
 define('IMG_ROOT','/assets/stuff/');
-define('IMG_USER_PATH','assets/themes/_((CLIENT_DIR))/images/');
+define('IMG_USER_PATH','assets/themes/_uvsc/images/');
 
 //	mobile detect
 require_once 'lib/Mobile_Detect.php';
@@ -342,7 +343,7 @@ function ethosLA_enqueue_login_items() {
 
 function ethosLA_enqueue_scripts() {
 	wp_enqueue_script('font-awesome', get_stylesheet_directory_uri() . '/js/fontawesome-all.min.js',array(),null,true);
-	wp_enqueue_script('((CLIENT_DIR))-ui', 'https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js',array(),null,true);
+	wp_enqueue_script('uvsc-ui', 'https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js',array(),null,true);
 	wp_enqueue_script( NEW_CLIENT . "-script", get_stylesheet_directory_uri() . "/js/script.js",array(),null,true);
 }
 
@@ -457,6 +458,14 @@ class ELA_Mods {
 		add_action( 'genesis_meta', array( $this, 'add_viewport' ), 2 );
 		add_action( 'wp_head', array( $this, 'add_to_header' ), 2 );
 		add_filter( 'body_class', array( $this, 'add_to_body_class' ) );
+
+		add_action( 'init', array( $this, 'board_members_custom_post_type' ) );
+		add_action( 'init', array( $this, 'board_members_category_tax' ), 0 );
+		add_filter( 'enter_title_here', array( $this, 'board_members_change_title_text' ) );
+		
+		add_action( 'init', array( $this, 'family_members_custom_post_type' ) );
+		add_action( 'init', array( $this, 'family_members_category_tax' ), 0 );
+		add_filter( 'enter_title_here', array( $this, 'family_members_change_title_text' ) );
 	}
 
 
@@ -471,7 +480,7 @@ class ELA_Mods {
 	public function add_to_header() {
 		$output = '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\r\n";
 		$output .= '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\r\n";
-		// $output .= '<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;900&display=swap" rel="stylesheet">' . "\r\n";
+		$output .= '<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">' . "\r\n";
 
 		print $output;
 	}
@@ -488,10 +497,195 @@ class ELA_Mods {
 
 		return $classes;
 	}
+
+
+	//  create board member post type + tax
+	public function board_members_category_tax() {
+		register_taxonomy(
+			'board_members_category',
+			'bm_cat',
+			array(
+				'label' => __( 'Categories' ),
+				'rewrite' => array( 'slug' => 'board_members_category' ),
+				'hierarchical' => true
+			)
+		);
+	}
+
+
+	public function board_members_custom_post_type() {
+		$labels = array(
+			'name'                => __( 'Board Members' ),
+			'singular_name'       => __( 'Board Member' ),
+			'menu_name'           => __( 'Board Members' ),
+			'parent_item_colon'   => __( 'Parent Board Member' ),
+			'all_items'           => __( 'All Board Members' ),
+			'view_item'           => __( 'View Board Member' ),
+			'add_new_item'        => __( 'Add New Board Member' ),
+			'add_new'             => __( 'Add New' ),
+			'edit_item'           => __( 'Edit Board Member' ),
+			'update_item'         => __( 'Update Board Member' ),
+			'search_items'        => __( 'Search Board Member' ),
+			'not_found'           => __( 'Not Found' ),
+			'not_found_in_trash'  => __( 'Not found in Trash' )
+		);
+		$args = array(
+			'label'               => __( 'board_members' ),
+			'description'         => __( 'UVSC Board Members' ),
+			'labels'              => $labels,
+			'supports'            => array( 'title', 'thumbnail', 'revisions', 'custom-fields'),
+			'public'              => true,
+			'hierarchical'        => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_nav_menus'   => true,
+			'show_in_admin_bar'   => true,
+			'has_archive'         => true,
+			'menu_icon'			  => 'dashicons-businessperson',
+			'can_export'          => true,
+			'exclude_from_search' => false,
+			'yarpp_support'       => true,
+			'taxonomies' 	      => array('post_tag', 'board_members_category'),
+			'publicly_queryable'  => true,
+			'capability_type'     => 'page'
+		);
+
+		register_post_type( 'board_members', $args );
+	}
+
+
+	//  change case study post type title prompt
+	public function board_members_change_title_text( $title ){
+		$screen = get_current_screen();
+
+		if ( 'board_members' == $screen->id ) $title = 'Enter Board Member Name';
+	
+		return $title;
+	}
+
+
+	//  create family member post type + tax
+	public function family_members_category_tax() {
+		register_taxonomy(
+			'family_members_category',
+			'fm_cat',
+			array(
+				'label' => __( 'Categories' ),
+				'rewrite' => array( 'slug' => 'family_members_category' ),
+				'hierarchical' => true
+			)
+		);
+	}
+
+
+	public function family_members_custom_post_type() {
+		$labels = array(
+			'name'                => __( 'Family Members' ),
+			'singular_name'       => __( 'Family Member' ),
+			'menu_name'           => __( 'Family Members' ),
+			'parent_item_colon'   => __( 'Parent Family Member' ),
+			'all_items'           => __( 'All Family Members' ),
+			'view_item'           => __( 'View Family Member' ),
+			'add_new_item'        => __( 'Add New Family Member' ),
+			'add_new'             => __( 'Add New' ),
+			'edit_item'           => __( 'Edit Family Member' ),
+			'update_item'         => __( 'Update Family Member' ),
+			'search_items'        => __( 'Search Family Member' ),
+			'not_found'           => __( 'Not Found' ),
+			'not_found_in_trash'  => __( 'Not found in Trash' )
+		);
+		$args = array(
+			'label'               => __( 'family_members' ),
+			'description'         => __( 'UVSC Family Members' ),
+			'labels'              => $labels,
+			'supports'            => array( 'title', 'thumbnail', 'revisions', 'custom-fields'),
+			'public'              => true,
+			'hierarchical'        => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_nav_menus'   => true,
+			'show_in_admin_bar'   => true,
+			'has_archive'         => true,
+			'menu_icon'			  => 'dashicons-heart',
+			'can_export'          => true,
+			'exclude_from_search' => false,
+			'yarpp_support'       => true,
+			'taxonomies' 	      => array('post_tag', 'family_members_category'),
+			'publicly_queryable'  => true,
+			'capability_type'     => 'page'
+		);
+
+		register_post_type( 'family_members', $args );
+	}
+
+
+	//  change case study post type title prompt
+	public function family_members_change_title_text( $title ){
+		$screen = get_current_screen();
+
+		if ( 'family_members' == $screen->id ) $title = 'Enter Family Member Name';
+	
+		return $title;
+	}
 	
 }
 
 $super_mods = new ELA_Mods;
+
+
+
+#-----------------------------------------------------------------#
+#	SHORTCODES
+#-----------------------------------------------------------------#
+
+class ELA_Shortcodes {
+
+	public function __construct() {
+		add_shortcode( 'BOARD_MEMBERS', array( $this, 'board_members' ) );
+		add_shortcode( 'FAMILY_MEMBERS', array( $this, 'family_members' ) );
+	}
+
+
+	public function board_members($atts) {
+	  return get_template_part( E_SHORTCODES, 'board-members' );
+	}
+
+
+	public function family_members($atts) {
+	  return get_template_part( E_SHORTCODES, 'family-members' );
+	}
+}
+
+$eLA_shortcodes = new ELA_Shortcodes;
+
+
+
+#-----------------------------------------------------------------#
+#	ACF
+#-----------------------------------------------------------------#
+
+class ELA_ACF {
+
+	public function __construct() {
+		add_action( 'init', array( $this, 'enable_options' ) );
+	}
+
+	public function enable_options() {
+		// Enable Site Options section
+		if ( function_exists('acf_add_options_page') ) {
+			acf_add_options_page(array(
+				'page_title' 	=> 'Website Options',
+				'menu_title'	=> 'Website Options',
+				'menu_slug' 	=> 'global-settings',
+				'capability'	=> 'edit_posts',
+				'redirect'		=> false
+			));
+		}
+	}
+	
+}
+
+$ela_acf = new ELA_ACF;
 
 
 #-----------------------------------------------------------------#
@@ -672,11 +866,89 @@ class ELA_Elements {
 		 // $this->key = $key;
 	}
 
+
 	public function vimeoVideo( $id, $cls = false, $poster = false ) {
 		//	need to add poster code
 		$v = '<iframe class="lazy loadImg full__container rel '. $cls .'" data-src="https://player.vimeo.com/video/'. $id .'?autoplay=0&loop=0&muted=0&byline=0&portrait=0&title=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
 		return $v;
+	}
+
+
+	public static function ela_markup( $wrap, $atts, $content ) {
+		//	simple markup function for when genesis outputs extra html
+		//	use this in some instances when leveraging ACF flexible content
+
+		$output = sprintf( '<%s ', $wrap );
+
+		foreach( $atts as $key => $attr ) {
+			if ( !$attr ) continue;
+			$output .= sprintf( '%s="%s"', $key, $attr );
+		}
+
+		$output .= ">";
+		$output .= $content;
+
+		$output .= sprintf( '</%s>', $wrap );
+
+		return $output;
+	}
+
+
+	public static function button( $params, $echo = true ) {
+		//	size, type (outline, solid), class, tag, paramaters, text
+		$params = (object) $params;
+		$wrap_class = array("btn-main rel");
+		$atts = array();
+
+		//	button size
+		$wrap_class[] = $params->size ?? "sm";
+
+		//	button type
+		$wrap_class[] = $params->type ?? "solid";
+
+		//	wrap tag
+		$wrap_tag = $params->tag ?? "a";
+
+		//	rel parameter for a tag
+		if ( $wrap_tag === "a" ) $atts['rel'] = "nofollow";
+
+		//	add classes to parameters
+		if ( isset( $params->class ) ) $wrap_class[] = $params->class;
+		$atts['class'] = implode(" ", $wrap_class);
+
+		//	all other parameters
+		$params->parameters = $params->parameters ?? array();
+		foreach( $params->parameters as $key => $p ) {
+			if ( !$key || $key == null) continue;
+			if ( $key === "class" || $key === "tag" ) continue;
+			$atts[$key] = $p;
+		}
+
+		//	print button
+		$btn = genesis_markup([
+			'open'		=> '<div %s>',
+			'context'	=> 'btn_bg',
+			'atts'		=> [ 'class' => "btn-bg full__container full__height topleft nopoint noover abs" ],
+			'echo'      => false,
+			'close'		=> '</div>'
+		]);
+		$btn .= genesis_markup([
+			'open'		=> '<span %s>',
+			'context'	=> 'btn_text',
+			'atts'		=> [ 'class' => "nopoint f_med_hvy" ],
+			'content'   => trim( $params->text ),
+			'echo'      => false,
+			'close'		=> '</span>'
+		]);
+		
+
+		if ( $echo ) {
+			print self::ela_markup( $wrap_tag, $atts, $btn );
+		} else {
+			return self::ela_markup( $wrap_tag, $atts, $btn );
+		}
+		
 	}
 	
 }
