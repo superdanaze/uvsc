@@ -130,7 +130,7 @@
             [
                 'open'		=> '<section %s>',
                 'context'	=> "home_hero_" . $row,
-                'atts'		=> [ 'class' => "home-hero full__container rel", 'data-row' => $row ],
+                'atts'		=> [ 'class' => "home-hero page-hero full__container rel", 'data-row' => $row ],
                 'content'	=> $output,
                 'close'		=> '</section>',
             ]

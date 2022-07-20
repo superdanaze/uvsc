@@ -355,7 +355,7 @@ add_action( 'wp_enqueue_scripts', 'ethosLA_enqueue_scripts' );
 #-----------------------------------------------------------------#
 
 function ethosLA_enqueue_admin_items() {
-	wp_enqueue_style( NEW_CLIENT . '-admin_style', get_stylesheet_directory_uri() . '/assets/css/admin.css');
+	wp_enqueue_style( NEW_CLIENT . '-admin_style', get_stylesheet_directory_uri() . '/css/admin.css');
 	// wp_enqueue_script( NEW_CLIENT. '-admin_script', get_stylesheet_directory_uri() . '/assets/js/admin.js',array(),false,true);
 }
 	
@@ -415,7 +415,7 @@ class ELA_Funcs {
 		}
 
 		if ( $print ) {
-			add_action( 'wp_head', function() use( $id ) {
+			add_action( 'wp_footer', function() use( $id ) {
 				print self::minimizeCSS( sprintf('<style id="%s">%s</style>', $id, $this->allcss[$id] ) );
 			});
 		}
@@ -466,6 +466,15 @@ class ELA_Mods {
 		add_action( 'init', array( $this, 'family_members_custom_post_type' ) );
 		add_action( 'init', array( $this, 'family_members_category_tax' ), 0 );
 		add_filter( 'enter_title_here', array( $this, 'family_members_change_title_text' ) );
+
+		add_action( 'init', array( $this, 'press_articles_custom_post_type' ) );
+
+		add_action( 'init', array( $this, 'news_articles_custom_post_type' ) );
+		add_action( 'init', array( $this, 'news_articles_category_tax' ), 0 );
+
+		add_action( 'init', array( $this, 'do_post_single' ) );
+
+		add_filter( 'genesis_footer', array( $this, 'ela_footer' ), 10 );
 	}
 
 
@@ -493,6 +502,36 @@ class ELA_Mods {
 
 		//	nav color
 		$classes[] = get_field('header_color_scheme');
+		
+		//	post type for body classes
+		$type = get_post_type();
+
+		//	single or archives
+		if ( is_single() || is_archive() ) {
+			$classes[] = 'uvsc-hero';
+			$classes[] = 'uvsc-page';
+		}
+
+		//	archives
+		if ( is_archive() ) {
+			$_class = str_replace( "_", "-", $type ) . '-archive';
+
+			//	remove nav-light class, if applicable
+			$classes = array_filter( $classes, function($c) {
+				if ( $c !== "nav-light" ) return $c;
+			});
+
+			$classes[] = "nav-dark";
+			$classes[] = "is-archive";
+			$classes[] = $_class;
+		}
+
+		//	single
+		if ( is_single() ) {
+			$_class = str_replace( "_", "-", $type ) . '-single';
+
+			$classes[] = $_class;
+		}
 		
 
 		return $classes;
@@ -619,13 +658,144 @@ class ELA_Mods {
 	}
 
 
-	//  change case study post type title prompt
+	//  change family members post type title prompt
 	public function family_members_change_title_text( $title ){
 		$screen = get_current_screen();
 
 		if ( 'family_members' == $screen->id ) $title = 'Enter Family Member Name';
 	
 		return $title;
+	}
+
+
+	//  create press articles post type
+	public function press_articles_custom_post_type() {
+		$labels = array(
+			'name'                => __( 'Press Articles' ),
+			'singular_name'       => __( 'Press Article' ),
+			'menu_name'           => __( 'Press Articles' ),
+			'parent_item_colon'   => __( 'Parent Press Article' ),
+			'all_items'           => __( 'All Press Articles' ),
+			'view_item'           => __( 'View Press Article' ),
+			'add_new_item'        => __( 'Add New Press Article' ),
+			'add_new'             => __( 'Add New' ),
+			'edit_item'           => __( 'Edit Press Article' ),
+			'update_item'         => __( 'Update Press Article' ),
+			'search_items'        => __( 'Search Press Article' ),
+			'not_found'           => __( 'Not Found' ),
+			'not_found_in_trash'  => __( 'Not found in Trash' )
+		);
+		$args = array(
+			'label'               => __( 'press_articles' ),
+			'description'         => __( 'UVSC Press Articles' ),
+			'labels'              => $labels,
+			'supports'            => array( 'title', 'thumbnail', 'revisions', 'custom-fields'),
+			'public'              => true,
+			'hierarchical'        => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_nav_menus'   => true,
+			'show_in_admin_bar'   => true,
+			'has_archive'         => true,
+			'menu_icon'			  => 'dashicons-welcome-widgets-menus',
+			'can_export'          => true,
+			'exclude_from_search' => false,
+			'yarpp_support'       => true,
+			'taxonomies' 	      => array('post_tag'),
+			'publicly_queryable'  => true,
+			'capability_type'     => 'page'
+		);
+
+		register_post_type( 'press_articles', $args );
+	}
+
+
+	//  create News articles post type
+	public function news_articles_custom_post_type() {
+		$labels = array(
+			'name'                => __( 'News Articles' ),
+			'singular_name'       => __( 'News Article' ),
+			'menu_name'           => __( 'News Articles' ),
+			'parent_item_colon'   => __( 'Parent News Article' ),
+			'all_items'           => __( 'All News Articles' ),
+			'view_item'           => __( 'View News Article' ),
+			'add_new_item'        => __( 'Add New News Article' ),
+			'add_new'             => __( 'Add New' ),
+			'edit_item'           => __( 'Edit News Article' ),
+			'update_item'         => __( 'Update News Article' ),
+			'search_items'        => __( 'Search News Article' ),
+			'not_found'           => __( 'Not Found' ),
+			'not_found_in_trash'  => __( 'Not found in Trash' )
+		);
+		$args = array(
+			'label'               => __( 'news_articles' ),
+			'description'         => __( 'UVSC News Articles' ),
+			'labels'              => $labels,
+			'supports'            => array( 'title', 'thumbnail', 'revisions', 'custom-fields', 'editor'),
+			'public'              => true,
+			'hierarchical'        => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_nav_menus'   => true,
+			'show_in_admin_bar'   => true,
+			'has_archive'         => true,
+			'menu_icon'			  => 'dashicons-media-document',
+			'can_export'          => true,
+			'exclude_from_search' => false,
+			'yarpp_support'       => true,
+			'taxonomies' 	      => array('post_tag', 'news_articles_category'),
+			'publicly_queryable'  => true,
+			'capability_type'     => 'page'
+		);
+
+		register_post_type( 'news_articles', $args );
+	}
+
+
+	//  create news articles post type tax
+	public function news_articles_category_tax() {
+		register_taxonomy(
+			'news_articles_category',
+			'na_cat',
+			array(
+				'label' => __( 'Categories' ),
+				'rewrite' => array( 'slug' => 'news_articles_category' ),
+				'hierarchical' => true
+			)
+		);
+	}
+
+
+	public function do_post_single() {
+		get_template_part( E_TEMPLATE, 'post-single' );
+	}
+
+
+	public static function colophon() {
+		$output = sprintf( '<p class="colophon">Copyright &copy; %s · ', date('Y') );
+		$output .= get_bloginfo('title');
+		$output .= '<em>, all rights reserved</em>';
+		$output .= ' · carefully crafted by ';
+		$output .= '<a href="https://ethosla.com" target="_blank" rel="nofollow">ethosLA</a>';
+		$output .= '</p>';
+
+		return $output;
+	}
+
+
+	public function ela_footer() {
+		get_template_part( E_TEMPLATE, 'footer' );
+
+		//	colophon
+		return genesis_markup(
+			[
+				'open'		=> '<div %s>',
+				'context'	=> NEW_CLIENT . '-colophon',
+				'atts'		=> [ 'class' => "colophon-wrap full__container" ],
+				'content'	=> $this->colophon(),
+				'close'		=> '</div>',
+			]
+		);
 	}
 	
 }
@@ -643,6 +813,7 @@ class ELA_Shortcodes {
 	public function __construct() {
 		add_shortcode( 'BOARD_MEMBERS', array( $this, 'board_members' ) );
 		add_shortcode( 'FAMILY_MEMBERS', array( $this, 'family_members' ) );
+		add_shortcode( 'PRESS', array( $this, 'press_articles' ) );
 	}
 
 
@@ -653,6 +824,11 @@ class ELA_Shortcodes {
 
 	public function family_members($atts) {
 	  return get_template_part( E_SHORTCODES, 'family-members' );
+	}
+
+
+	public function press_articles($atts) {
+	  return get_template_part( E_SHORTCODES, 'press-articles' );
 	}
 }
 
@@ -676,9 +852,17 @@ class ELA_ACF {
 			acf_add_options_page(array(
 				'page_title' 	=> 'Website Options',
 				'menu_title'	=> 'Website Options',
-				'menu_slug' 	=> 'global-settings',
+				'menu_slug' 	=> 'website-general-options',
+				'icon_url' 		=> 'dashicons-admin-site-alt3',
 				'capability'	=> 'edit_posts',
-				'redirect'		=> false
+				'redirect'		=> false,
+				'updated_message' => __("Website Options Updated", 'acf')
+			));
+
+			acf_add_options_sub_page(array(
+				'page_title' 	=> 'Footer Settings',
+				'menu_title'	=> 'Footer',
+				'parent_slug'	=> 'website-general-options',
 			));
 		}
 	}
@@ -949,6 +1133,26 @@ class ELA_Elements {
 			return self::ela_markup( $wrap_tag, $atts, $btn );
 		}
 		
+	}
+
+
+	public static function social_menu( $color_scheme = "light" ) {
+		$social = get_field( 'social_media_links', 'options' );
+
+		genesis_markup([
+			'open'		=> '<div %s>',
+			'context'	=> 'social_container',
+			'atts'		=> [ 'class' => "social-container flex vert " . $color_scheme ]
+		]);
+
+			foreach( $social as $key => $s ) {
+				printf( '<a href="%s" target="_blank" title="%s" rel="nofollow""><i class="%s"></i></a>', $s['link'], $s['profile']['label'], $s['profile']['value'] );
+			}
+
+		genesis_markup([
+			'context'	=> 'social_container',
+			'close'		=> '</div>'
+		]);
 	}
 	
 }

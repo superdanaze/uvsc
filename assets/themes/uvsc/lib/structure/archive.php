@@ -100,6 +100,8 @@ function genesis_do_author_title_description() {
 		return;
 	}
 
+	
+
 	$heading = get_the_author_meta( 'headline', (int) get_query_var( 'author' ) );
 
 	if ( empty( $heading ) && genesis_a11y( 'headings' ) ) {

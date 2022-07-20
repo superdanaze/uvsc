@@ -3,7 +3,7 @@
  * 
  *
  *
- * Template Name: UVSC Elementor
+ * Template Name: UVSC Posts
  *
  */
 
@@ -33,8 +33,9 @@ add_filter( 'body_class', 'rp_page_custom_body_class' );
  */
 function rp_page_custom_body_class( $classes ) {
 
-	$classes[] = 'uvsc-elementor';
+	$classes[] = 'uvsc-posts';
 	$classes[] = 'uvsc-page';
+	$classes[] = 'uvsc-hero';
 
 	//	add custom hero class
 	global $page_bg;
@@ -61,6 +62,14 @@ add_filter( 'genesis_markup_content-sidebar-wrap', '__return_null' );
 add_filter( 'genesis_markup_content', '__return_null' );
 
 
+//  get hero
+get_template_part( E_TEMPLATES, 'posts-type-hero' );
+
+//  get posts layout
+$posts_type = get_field('aggregate_posts');
+$posts_per_page = get_field('posts_per_page');
+
+get_template_part( E_TEMPLATES, 'aggregate-posts', array( 'posts_type' => $posts_type, 'posts_per_page' => $posts_per_page ) );
 
 
 // Runs the Genesis loop.

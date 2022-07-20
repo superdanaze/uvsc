@@ -179,9 +179,9 @@ window.isMobile = {
 		}
 	};
 
-	//	home hero things
+	//	hero things
 	let hh = {
-		section			: document.querySelector('section.home-hero'),
+		section			: document.querySelector('section.page-hero'),
 		peek_c			: document.querySelector('.hh-outerwrap'),
 		shift_c			: document.querySelector('.hh-container'),
 		factor			: 15,
@@ -388,7 +388,178 @@ window.isMobile = {
 		}
 	};
 
+	//	button replacements
+	let br = {
+		// buttons			: document.querySelectorAll('.make-btn'),
+		classes			: [ "btn-main", "solid", "rel" ],
+		div_classes		: [ "btn-bg", "full__container", "full__height", "topleft", "nopoint", "noover", "abs" ],
+		span_classes	: [ "nopoint", "f_med_hvy" ],
 
+		// add_classes_to_elements: function() {
+		// 	let items = [
+		// 		{
+		// 			element		: '.donation-block-inner .simpay-form-control',
+					
+		// 		}
+		// 	];
+
+		// 	items.forEach( item => {
+		// 		let els = document.querySelectorAll(item);
+
+		// 		if ( !els.length ) return;
+
+		// 		els.forEach( el => {
+		// 			el.classList.add("make-btn");
+		// 		} );
+		// 	});
+		// },
+
+		make_it: function() {
+			let buttons = document.querySelectorAll('.make-btn');
+
+			if ( !buttons.length ) return;
+
+			buttons.forEach( b => {
+				let size = b.dataset.size,
+					color = b.dataset.color,
+					target = b.dataset.target,
+					make = b.dataset.make,
+					text = "";
+
+				console.log(b.querySelector(target));
+
+				let atts = b.querySelector(target).attributes;
+
+				let el = document.createElement(make),
+					div = document.createElement('div'),
+					span = document.createElement('span');
+
+				//	get button text
+				switch ( b.querySelector(target).nodeName ) {
+					case "INPUT" :
+						text = b.querySelector(target).value;
+					break;
+
+					case "BUTTON" || "A" : 
+						text = b.querySelector(target).textContent;
+					break;
+				}
+				
+
+				//	add atts to new element
+				Object.entries(atts).forEach( a => {
+					el.setAttribute( a[1].nodeName, a[1].nodeValue );
+				});
+
+				//	add classes to new element
+				this.classes.forEach( c => {
+					el.classList.add(c);
+				});
+				el.classList.add(size);
+				el.classList.add(color);
+
+				//	add div classes
+				this.div_classes.forEach( d => {
+					div.classList.add(d);
+				});
+
+				//	add span classes
+				this.span_classes.forEach( s => {
+					span.classList.add(s)
+				});
+
+				//	add button text
+				span.textContent = text;
+
+				//	append elements
+				el.append(div);
+				el.append(span);
+				b.append(el);
+
+				//	remove original element
+				b.querySelector(target).remove();
+			});
+		}
+
+	};
+
+	// br.add_classes_to_elements();
+	br.make_it();
+	
+
+
+	//	main contact form
+	let mcf = {
+		form		: document.querySelector('.mcf__container form'),
+
+		contactFormUI: function(e) {
+			let label = e.target.closest('.label__container').querySelector('span.label'),
+				icon = e.target.closest('.label__container').querySelector('span.icon'),
+				val = e.target.value;
+
+			if ( e.type === "focusin" ) {
+				label.classList.add('labelOut');
+				icon.classList.add('iconIn');
+			}
+
+			if ( e.type === "focusout" && val === "" ) {
+				label.classList.remove('labelOut');
+				icon.classList.remove('iconIn');
+			}
+		}
+	};
+
+
+
+	//	giving elements
+	let dg = {
+		isactive	: 'onetime',
+		_click		: true,
+
+		activate_giving_option: function(e) {
+			if ( !e.target.dataset.id ) return;
+
+			let current = document.querySelector('.d-type-btn.active');
+
+			//	handle giving options toggle
+			if ( e.target.dataset.id === this.isactive || !this._click ) return;
+
+			this._click = false;
+
+			let _current = document.getElementById(this.isactive),
+				_new = document.getElementById(e.target.dataset.id);
+
+			//	handle button toggle
+			current.classList.remove('active');
+			e.target.classList.add('active');
+
+			anime({
+				targets : _current,
+				opacity : [ 1, 0 ],
+				duration : 150,
+				easing : "linear",
+				complete : () => {
+					_current.classList.add('hide');
+					_new.classList.remove('hide');
+				}
+			});
+
+			anime({
+				targets : _new,
+				opacity : [ 0, 1 ],
+				translateY : [ 10, 0 ],
+				duration : 250,
+				delay : 160,
+				easing : "easeOutQuad",
+				complete : () => {
+					this._click = true;
+					this.isactive = e.target.dataset.id;
+				}
+			});
+		}
+	};
+
+	
 
 	document.addEventListener('click', function(e) {
 		//	mobile nav
@@ -405,6 +576,20 @@ window.isMobile = {
 		//	family members modal
 		if ( e.target.dataset.modal === "family" ) fm_modal.handle_modal(e);
 
+		//	giving elements
+		if ( e.target.classList.contains('d-type-btn') ) dg.activate_giving_option(e);
+
+	});
+
+
+	document.addEventListener('focusin', function(e) {
+		//	main contact form
+		if ( e.target.closest('.label__container') ) mcf.contactFormUI(e);
+	});
+
+	document.addEventListener('focusout', function(e) {
+		//	main contact form
+		if ( e.target.closest('.label__container') ) mcf.contactFormUI(e);
 	});
 
 

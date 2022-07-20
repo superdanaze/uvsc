@@ -1426,7 +1426,7 @@ p.entry-meta {
 	font-size: 15px;
 	line-height: 1.5;
 	padding: 30px;
-	text-align: center;
+	/* text-align: center; */
 }
 
 .site-footer p {

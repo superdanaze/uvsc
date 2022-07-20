@@ -8,6 +8,37 @@
     }
 
 
+    /*  TEMPLATE :: UVSC POSTS
+    =========================================== */
+
+    article.post-item-wrap {
+        grid-template-columns: 1fr;
+    }
+
+
+    /*  TEMPLATE :: UVSC DONATE
+    =========================================== */
+
+    .donation-types {
+        gap:15px;
+    }
+    .donation-types .d-type-btn {
+        height: 60px;
+        border: 2px solid var(--uvsc-slate-blue);
+        border-radius: 10px;
+    }
+
+
+    /*  TEMPLATE PART :: PAST BENEFICIARIES
+    =========================================== */
+
+    .posts-grid-3 {
+        grid-template-columns: 1fr;
+        gap:50px;
+    }
+    
+
+
     /*  SHORTCODES :: BOARD MEMBERS
     =========================================== */
 
@@ -32,6 +63,14 @@
     }
     .bm-modal-close {
         left:25px;
+    }
+
+
+    /*  FOOTER
+    =========================================== */
+
+    .footer-inner {
+        grid-template-columns: 1fr;
     }
     
 
@@ -65,6 +104,48 @@
 
 @media screen and ( min-width: 768px ) {
 
+    /*  TEMPLATE :: UVSC POSTS
+    =========================================== */
+
+    article.post-item-wrap {
+        grid-template-columns: clamp(275px, 30vw, 410px) 1fr;
+    }
+
+    /*  TEMPLATE :: UVSC DONATE
+    =========================================== */
+
+    .donation-types {
+        border:2px solid var(--uvsc-slate-blue);
+        gap:0;
+    }
+    .donation-types .d-type-btn {
+        height: 50px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-left:1px solid var(--uvsc-slate-blue);
+        border-right:1px solid var(--uvsc-slate-blue);
+        border-radius: 0;
+    }
+    .donation-types .d-type-btn:first-child {
+        border-left-width:0px;
+    }
+    .donation-types .d-type-btn:last-child {
+        border-right-width:0px;
+    }
+
+
+    /*  TEMPLATE PART :: PAST BENEFICIARIES
+    =========================================== */
+
+    .posts-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+        gap:50px 0px;
+    }
+    .posts-grid-3 .post-item-image {
+        height:225px;
+    }
+
+
     /*  SHORTCODES :: BOARD MEMBERS
     =========================================== */
 
@@ -97,13 +178,26 @@
     }
 
 
+    /*  FOOTER
+    =========================================== */
+
+    .footer-inner {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
 }
 
 
 
 @media screen and ( min-width: 960px ) {
 
-    
+    /*  FOOTER
+    =========================================== */
+
+    .footer-inner {
+        grid-template-columns: repeat(3, 1fr);
+    }
 
 }
 
@@ -123,6 +217,22 @@
     }
     .title-area a img {
         width:175px;
+    }
+
+
+    /*  ELEMENTOR GENERAL
+    =========================================== */
+
+    section.elementor-section {
+        padding-inline:15px;
+    }
+
+
+    /*  TEMPLATE PART :: PAST BENEFICIARIES
+    =========================================== */
+
+    .posts-grid-3 {
+        gap:50px;
     }
 
 
@@ -157,6 +267,20 @@
 
 
 @media screen and ( max-width: 639px ) {
+
+    /*  TEMPLATE :: UVSC DONATE
+    =========================================== */
+
+    .donation-types figure.d-type-btn a {
+        -webkit-flex-direction: column;
+        flex-direction: column;
+    }
+    .donation-types figure.d-type-btn a span {
+        margin:0;
+    }
+    .donation-types figure.d-type-btn a svg {
+        max-width: 75px;
+    }
 
 }
 
