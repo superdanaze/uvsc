@@ -60,7 +60,7 @@
                     'open'      => '<div %s>',
                     'context'	=> "footer_col1_txt",
                     'atts'		=> [ 'class' => "footer-text T_sm" ],
-                    'content'   => sprintf( '<p class="nomargin">%s</p>', trim( $col1_txt ) ),
+                    'content'   => sprintf( '<p class="f_med nomargin">%s</p>', trim( $col1_txt ) ),
                     'close'     => '</div>'
                 ]
             );
@@ -115,11 +115,11 @@
             [
                 'open'      => '<div %s>',
                 'context'	=> "footer_col3",
-                'atts'		=> [ 'class' => "footer-col col--3 flex" ]
+                'atts'		=> [ 'class' => "footer-col col--3" ]
             ]
         );
 
-            if ( $col3_txt ) printf( '<p class="nomargin">%s</p>', trim( $col3_txt ) );
+            if ( $col3_txt ) printf( '<p class="f_med nomargin">%s</p>', trim( $col3_txt ) );
 
         genesis_markup(
             [
