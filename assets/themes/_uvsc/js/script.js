@@ -36,6 +36,28 @@ window.isMobile = {
 		}
 	}
 
+	function setCookie(cname, cvalue, exdays) {
+		var d = new Date();
+		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+		var expires = "expires="+d.toUTCString();
+		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+	
+	function getCookie(cname) {
+		var name = cname + "=";
+		var ca = document.cookie.split(';');
+		for(var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+
 	
 	let header = {
 		trigger		: document.querySelector('.nav-trigger-wrap'),
@@ -218,6 +240,61 @@ window.isMobile = {
 			hh.move(e);
 		});
 	}
+
+
+	//	modals common
+	let modals = {
+		modal		: document.querySelector('.modal-common'),
+		cookiename	: "modalcommon",
+		c_duration	: 1,
+		_click		: true,
+
+		open: function() {
+			if ( getCookie( this.cookiename ) ) return;
+
+			setTimeout(() => {
+				noscroll(true);
+				this.modal.classList.add('active');
+
+				anime({
+					targets : this.modal.querySelectorAll('.modal-item'),
+					opacity : 1,
+					easing : "linear",
+					duration : 250,
+					delay : anime.stagger(75)
+				});
+			}, this.modal.dataset.delay);
+		},
+
+		close: function(e) {
+			if ( e.target.dataset.action !== "close" ) return;
+
+			if ( !this._click ) return;
+
+			this._click = false;
+
+			let duration = this.c_duration * 86400;
+
+			anime({
+				targets : document.getElementById(e.target.dataset.modal),
+				opacity : 0,
+				duration : 200,
+				easing : "linear",
+				complete : () => {
+					this.modal.remove();
+
+					noscroll();
+
+					this._click = true;
+
+					setCookie( this.cookiename, true, duration );
+				}
+			});
+		}
+	};
+
+	//	activate modal
+	if ( modals.modal ) modals.open();
 
 
 	//	board members modal
@@ -426,8 +503,6 @@ window.isMobile = {
 					make = b.dataset.make,
 					text = "";
 
-				console.log(b.querySelector(target));
-
 				let atts = b.querySelector(target).attributes;
 
 				let el = document.createElement(make),
@@ -569,6 +644,9 @@ window.isMobile = {
 		if ( e.target.dataset.action === "nav-close" ) {
 			header.animate_burger(false);
 		}
+
+		//	modal common
+		if ( e.target.dataset.modal === "modal-main" ) modals.close(e);
 
 		//	board members modal
 		if ( e.target.dataset.modal === "board" ) bm_modal.handle_modal(e);

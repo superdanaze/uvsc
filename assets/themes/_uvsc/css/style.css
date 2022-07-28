@@ -231,6 +231,17 @@ p a:hover::after {
 }
 
 
+/*  COMMON
+=========================================== */
+
+/*  flex + grid  */
+
+.posts-grid {
+    display:grid;
+    gap:50px 0;
+}
+
+
 /*  SLOPES
 =========================================== */
 
@@ -347,6 +358,37 @@ footer {
 .close-X span:last-child {
     -webkit-transform:rotate(-45deg) translate(0px, -0.5px);
     transform:rotate(-45deg) translate(0px, -0.5px);
+}
+
+/*  main modal  */
+
+.modal-common {
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    display: block;
+    opacity: 0;
+    z-index: -1000;
+    position: fixed;
+}
+.modal-common.active {
+    opacity: 1;
+    z-index: 1000;
+}
+.modal-common .modal-content {
+    overflow: hidden;
+    padding:100px 0 0;
+}
+.modal-common .modal-content-inner {
+    background:#fff;
+    height:auto;
+    max-height: calc(95vh - 115px);
+    border-radius: 10px;
+    overflow-y:auto;
+}
+.modal-common .modal-item {
+    opacity: 0;
 }
 
 
@@ -579,6 +621,58 @@ input[type="submit"] {
     margin-left: 0 !important;
     padding:10px;
 }
+
+/*  inline form  */
+
+.inline-form {
+    -webkit-clip-path: polygon(0 5%, 100% 0, 100% 95%, 0% 100%);
+    clip-path: polygon(0 5%, 100% 0, 100% 95%, 0% 100%);
+}
+.inline-form .main_contact_form {
+    max-width: 100%;
+    /* display:grid;
+    grid-template-columns: 2fr 2fr minmax(142px, 1fr);
+    gap:25px 15px; */
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.inline-form .label__container {
+    border:0;
+    margin:0;
+}
+.inline-form .label__container:not(:last-of-type) {
+    padding-right:15px;
+}
+.inline-form .quick__connect input[type="text"],
+.inline-form .quick__connect input[type="email"] {
+    font-size: 17px !important;
+    border:1px solid var(--uvsc-text-light);
+    border-radius: 10px;
+    padding-block:15px !important;
+}
+.inline-form .quick__connect span.label {
+    font-size: 17px !important;
+}
+.inline-form .quick__connect span.icon {
+    font-size: 18px !important;
+}
+.inline-form .quick__connect .submit__container {
+    padding:0;
+}
+
+.inline-form .wpcf7-not-valid-tip {
+    color:var(--uvsc-bisque);
+    padding-left: 10px;
+    position:absolute;
+}
+.inline-form .wpcf7-response-output {
+    font-weight: 700;
+    color:var(--uvsc-bisque);
+    border:0 !important;
+}
+
 
 
 /*  ELEMENTOR : EDITOR
@@ -842,6 +936,7 @@ article.post-item-wrap:hover {
 .posts-grid-3 {
     display:grid;
 }
+.posts-grid .post-item-image,
 .posts-grid-3 .post-item-image {
     display: block;
 }

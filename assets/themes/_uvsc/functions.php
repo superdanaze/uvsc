@@ -467,6 +467,8 @@ class ELA_Mods {
 		add_action( 'init', array( $this, 'family_members_category_tax' ), 0 );
 		add_filter( 'enter_title_here', array( $this, 'family_members_change_title_text' ) );
 
+		add_action( 'init', array( $this, 'events_custom_post_type' ) );
+
 		add_action( 'init', array( $this, 'press_articles_custom_post_type' ) );
 
 		add_action( 'init', array( $this, 'news_articles_custom_post_type' ) );
@@ -475,6 +477,8 @@ class ELA_Mods {
 		add_action( 'init', array( $this, 'do_post_single' ) );
 
 		add_filter( 'genesis_footer', array( $this, 'ela_footer' ), 10 );
+
+		add_filter( 'genesis_after_footer', array( $this, 'ela_modal' ), 10 );
 	}
 
 
@@ -668,6 +672,48 @@ class ELA_Mods {
 	}
 
 
+	//  create events post type
+	public function events_custom_post_type() {
+		$labels = array(
+			'name'                => __( 'Events' ),
+			'singular_name'       => __( 'Event' ),
+			'menu_name'           => __( 'Events' ),
+			'parent_item_colon'   => __( 'Parent Event' ),
+			'all_items'           => __( 'All Events' ),
+			'view_item'           => __( 'View Event' ),
+			'add_new_item'        => __( 'Add New Event' ),
+			'add_new'             => __( 'Add New' ),
+			'edit_item'           => __( 'Edit Event' ),
+			'update_item'         => __( 'Update Event' ),
+			'search_items'        => __( 'Search Event' ),
+			'not_found'           => __( 'Not Found' ),
+			'not_found_in_trash'  => __( 'Not found in Trash' )
+		);
+		$args = array(
+			'label'               => __( 'events' ),
+			'description'         => __( 'UVSC Events' ),
+			'labels'              => $labels,
+			'supports'            => array( 'title', 'thumbnail', 'excerpt', 'revisions', 'custom-fields'),
+			'public'              => true,
+			'hierarchical'        => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_nav_menus'   => true,
+			'show_in_admin_bar'   => true,
+			'has_archive'         => true,
+			'menu_icon'			  => 'dashicons-calendar-alt',
+			'can_export'          => true,
+			'exclude_from_search' => false,
+			'yarpp_support'       => true,
+			'taxonomies' 	      => array('post_tag'),
+			'publicly_queryable'  => true,
+			'capability_type'     => 'page'
+		);
+
+		register_post_type( 'events', $args );
+	}
+
+
 	//  create press articles post type
 	public function press_articles_custom_post_type() {
 		$labels = array(
@@ -689,7 +735,7 @@ class ELA_Mods {
 			'label'               => __( 'press_articles' ),
 			'description'         => __( 'UVSC Press Articles' ),
 			'labels'              => $labels,
-			'supports'            => array( 'title', 'thumbnail', 'revisions', 'custom-fields'),
+			'supports'            => array( 'title', 'thumbnail', 'excerpt', 'revisions', 'custom-fields'),
 			'public'              => true,
 			'hierarchical'        => false,
 			'show_ui'             => true,
@@ -731,7 +777,7 @@ class ELA_Mods {
 			'label'               => __( 'news_articles' ),
 			'description'         => __( 'UVSC News Articles' ),
 			'labels'              => $labels,
-			'supports'            => array( 'title', 'thumbnail', 'revisions', 'custom-fields', 'editor'),
+			'supports'            => array( 'title', 'thumbnail', 'revisions', 'excerpt', 'custom-fields', 'editor'),
 			'public'              => true,
 			'hierarchical'        => false,
 			'show_ui'             => true,
@@ -797,6 +843,11 @@ class ELA_Mods {
 			]
 		);
 	}
+
+
+	public function ela_modal() {
+		get_template_part( E_TEMPLATE, 'modal' );
+	}
 	
 }
 
@@ -811,9 +862,43 @@ $super_mods = new ELA_Mods;
 class ELA_Shortcodes {
 
 	public function __construct() {
+		add_shortcode( 'BUTTON', array( $this, 'make_button' ) );
+		add_shortcode( 'HOME_NEWS_EVENTS', array( $this, 'home_news_and_events' ) );
 		add_shortcode( 'BOARD_MEMBERS', array( $this, 'board_members' ) );
 		add_shortcode( 'FAMILY_MEMBERS', array( $this, 'family_members' ) );
 		add_shortcode( 'PRESS', array( $this, 'press_articles' ) );
+	}
+
+
+	public function make_button($atts) {
+		extract(shortcode_atts(array(
+			'size'		=> 'sm',
+			'type'		=> 'solid',
+			'wrap_tag'	=> 'a',
+			'classes'	=> 'slate-blue',
+			'href'		=> '/',
+			'text'		=> 'My Button'
+		), $atts));
+
+		$parameters = array( 'rel' => 'nofollow' );
+
+		if ( $wrap_tag === "a" ) $parameters['href'] = $href;
+
+		return ELA_Elements::button(array(
+			'size'			=> $size,
+			'type'			=> $type,
+			'class'         => $classes,
+			'tag'			=> $wrap_tag,
+			'text'          => $text,
+			'parameters'    => $parameters
+		), false);
+	}
+
+
+	public function home_news_and_events($atts) {
+		ob_start();
+			get_template_part( E_SHORTCODES, 'news-events' );
+		return ob_get_clean();
 	}
 
 
@@ -857,6 +942,12 @@ class ELA_ACF {
 				'capability'	=> 'edit_posts',
 				'redirect'		=> false,
 				'updated_message' => __("Website Options Updated", 'acf')
+			));
+
+			acf_add_options_sub_page(array(
+				'page_title' 	=> 'Modal Settings',
+				'menu_title'	=> 'Modal',
+				'parent_slug'	=> 'website-general-options',
 			));
 
 			acf_add_options_sub_page(array(
