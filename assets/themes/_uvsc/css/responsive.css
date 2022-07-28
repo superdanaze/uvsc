@@ -86,6 +86,16 @@
 
 @media screen and ( min-width: 640px ) {
 
+    /*  COMMON
+    =========================================== */
+
+    /*  flex + grid  */
+    .posts-grid-2,
+    .posts-grid-4 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
     /*  SHORTCODES :: BOARD MEMBERS
     =========================================== */
 
@@ -103,6 +113,15 @@
 
 
 @media screen and ( min-width: 768px ) {
+
+    /*  COMMON
+    =========================================== */
+
+    /*  flex + grid  */
+    .posts-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
 
     /*  TEMPLATE :: UVSC POSTS
     =========================================== */
@@ -138,9 +157,10 @@
     =========================================== */
 
     .posts-grid-3 {
-        grid-template-columns: repeat(3, 1fr);
+        /* grid-template-columns: repeat(3, 1fr); */
         gap:50px 0px;
     }
+    .posts-grid .post-item-image,
     .posts-grid-3 .post-item-image {
         height:225px;
     }
@@ -191,6 +211,14 @@
 
 
 @media screen and ( min-width: 960px ) {
+
+    /*  COMMON
+    =========================================== */
+
+    /*  flex + grid  */
+    .posts-grid-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
 
     /*  FOOTER
     =========================================== */
@@ -267,6 +295,27 @@
 
 
 @media screen and ( max-width: 639px ) {
+
+    /*  FORMS
+    =========================================== */
+
+    .inline-form .main_contact_form {
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    .inline-form .label__container,
+    .inline-form .submit__container {
+        margin-inline:15px;
+    }
+    .inline-form .label__container:not(:last-of-type) {
+        margin-bottom:15px;
+    }
+
+    .inline-form .wpcf7-not-valid-tip {
+        top:0;
+        right:10px;
+    }
+
 
     /*  TEMPLATE :: UVSC DONATE
     =========================================== */
