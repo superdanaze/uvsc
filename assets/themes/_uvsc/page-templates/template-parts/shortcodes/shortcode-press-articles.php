@@ -147,14 +147,14 @@
 
         genesis_markup(
             [
-                'context'	=> 'board_members_wrap',
+                'context'	=> 'press_articles_inner',
                 'close'		=> '</div>'
             ]
         );
 
     genesis_markup(
         [
-            'context'	=> 'board_members_wrap',
+            'context'	=> 'press_articles_wrap',
             'close'		=> '</div>'
         ]
     );

@@ -1,5 +1,5 @@
 <?php
-    //  footer template
+    //  modal template
 
     $func = new ELA_Funcs;
     $enabled = get_field( 'enabledisable_modal', 'options' );

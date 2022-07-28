@@ -53,11 +53,13 @@
                         $post_info .= "&nbsp;&nbsp;|&nbsp;&nbsp;";
                         $post_info .= sprintf( '<span class="post-cats">%s</span>', get_the_category_list( ", " ) );
                     }
+                } else if ( $type === "events" ) {
+                    //  intentionally left blank
                 } else {
                     $category = $type . "_category";
                     $terms = get_the_terms( get_the_ID(), $category );
 
-                    if ( count( $terms ) ) {
+                    if ( $category && $terms && count( $terms ) ) {
 
                         $post_info .= "&nbsp;&nbsp;|&nbsp;&nbsp;";
 
