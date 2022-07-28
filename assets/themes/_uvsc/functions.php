@@ -441,6 +441,45 @@ class ELA_Funcs {
 		}
 	}
 
+
+	public function ela_get_thumbnail( $type, $id ) {
+		$url;
+
+        if ( $type === "press_articles" ) {
+            $url = get_field( 'article_image', $id );
+        } else {
+            $url = get_the_post_thumbnail_url( $id, "medium_large" );
+        }
+
+        return $url;
+	}
+
+
+	public function ela_get_post_date( $type, $id ) {
+        $date;
+
+        if ( $type === "events" ) {
+            $date = get_field( 'date', $id );
+        } else {
+            $date = get_the_date( "F j, Y", $id );
+        }
+
+        return $date;
+    }
+
+
+    public function ela_get_post_link( $type, $id ) {
+        $url;
+
+        if ( $type === "press_articles" ) {
+            $url = get_field( 'link_to_article', $id );
+        } else {
+            $url = get_post_permalink( $id );
+        }
+
+        return $url;
+    }
+
 }
 
 
